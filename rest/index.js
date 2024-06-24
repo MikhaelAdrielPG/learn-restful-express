@@ -1,4 +1,5 @@
 const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 const express = require("express");
 const app = express();
 
@@ -9,32 +10,32 @@ app.set("view engine", "ejs");
 
 let comments = [
   {
-    id: 1,
+    id: uuidv4(),
     username: "Michael",
     text: `Sometimes I’ll start a sentence and I don’t even know where it’s going. I just hope I find it along the way`,
   },
   {
-    id: 2,
+    id: uuidv4(),
     username: "Kelly",
     text: `I talk a lot, so I’ve learned to tune myself out`,
   },
   {
-    id: 3,
+    id: uuidv4(),
     username: "Kevin",
     text: `I JUST WANT TO LIE ON THE BEACH AND EAT HOT DOGS.`,
   },
   {
-    id: 4,
+    id: uuidv4(),
     username: "Dwight",
     text: `IDENTITY THEFT IS NOT A JOKE, JIM! MILLIONS OF FAMILIES SUFFER EVERY YEAR.`,
   },
   {
-    id: 5,
+    id: uuidv4(),
     username: "Ryan",
     text: `I’M SUCH A PERFECTIONIST THAT I'D KINDA RATHER NOT DO IT AT ALL THAN DO A CRAPPY VERSION.`,
   },
   {
-    id: 6,
+    id: uuidv4(),
     username: "Jim",
     text: `EVERYTHING I HAVE I OWE TO THIS JOB… THIS STUPID, WONDERFUL, BORING, AMAZING JOB.`,
   },
@@ -54,13 +55,13 @@ app.get("/comments/create", (req, res) => {
 
 app.post("/comments", (req, res) => {
   const { username, text } = req.body;
-  comments.push({ username, text });
+  comments.push({ username, text, id: uuidv4() });
   res.redirect("/comments");
 });
 
 app.get("/comments/:id", (req, res) => {
   const { id } = req.params;
-  const comment = comments.find((c) => c.id === parseInt(id));
+  const comment = comments.find((c) => c.id === id);
   res.render("comments/show", { comment });
 });
 
