@@ -41,6 +41,16 @@ app.get("/order", (req, res) => {
   res.send("GET order response");
 });
 
+app.get("/comments/create", (req, res) => {
+  res.render("comments/create");
+});
+
+app.post("/comments", (req, res) => {
+  const { username, text } = req.body;
+  comments.push({ username, text });
+  res.send("It Works!");
+});
+
 app.post("/order", (req, res) => {
   const { item, qty } = req.body;
   res.send(`Item: ${item} - Qty: ${qty}`);
