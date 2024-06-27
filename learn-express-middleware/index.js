@@ -10,13 +10,13 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
+const auth = (req, res, next) => {
   const { password } = req.query;
   if (password === "tahukrispi") {
     next();
   }
   res.send("Perlu masukkan password");
-});
+};
 
 app.get("/", (req, res) => {
   res.send("Hello, world!");
@@ -27,7 +27,7 @@ app.get("/halaman", (req, res) => {
   res.send("Hello, halaman!");
 });
 
-app.get("/admin", (req, res) => {
+app.get("/admin", auth, (req, res) => {
   res.send("Helo admin");
 });
 
