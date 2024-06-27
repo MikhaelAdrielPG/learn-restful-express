@@ -15,7 +15,8 @@ const auth = (req, res, next) => {
   if (password === "tahukrispi") {
     next();
   }
-  res.send("Perlu masukkan password");
+  // res.send("Perlu masukkan password");
+  throw new Error("Perlu masukkan password");
 };
 
 app.get("/", (req, res) => {
