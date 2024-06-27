@@ -78,9 +78,19 @@ app.post(
     const garment = await Garment.findById(garment_id);
     const product = new Product(req.body);
     garment.products.push(product);
+    product.garment = garment;
     await garment.save();
     await product.save();
     res.redirect(`/garments/${garment_id}`);
+  })
+);
+
+app.delete(
+  "/garments/:garment_id/",
+  wrapAsync(async (req, res) => {
+    const { garment_id } = req.params;
+    await Garment.findOneAndDelete({ _id: garment_id });
+    res.redirect("/garments");
   })
 );
 
@@ -112,7 +122,7 @@ app.get(
   "/products/:id",
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const product = await Product.findById(id);
+    const product = await Product.findById(id).populate("garment");
     res.render("products/show", { product });
   })
 );
