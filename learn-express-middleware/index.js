@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 morgan = require("morgan");
 
+const ErrorHandler = require("./ErrorHandler");
+
 app.use(morgan("dev"));
 
 app.use((req, res, next) => {
@@ -15,7 +17,8 @@ const auth = (req, res, next) => {
   if (password === "tahukrispi") {
     next();
   }
-  res.send("Perlu masukkan password");
+  // res.send("Perlu masukkan password");
+  throw new ErrorHandler("Perlu masukkan password", 401);
 };
 
 app.get("/", (req, res) => {
@@ -27,12 +30,32 @@ app.get("/halaman", (req, res) => {
   res.send("Hello, halaman!");
 });
 
+app.get("/error", (req, res) => {
+  bird.fly();
+});
+
 app.get("/admin", auth, (req, res) => {
   res.send("Helo admin");
 });
 
-app.use((req, res) => {
-  res.status(404).send("Page not found");
+app.get("/general/error", (req, res) => {
+  throw new ErrorHandler();
+});
+
+// app.use((req, res) => {
+//   res.status(404).send("Page not found");
+// });
+
+// app.use((err, req, res, next) => {
+//   console.log("********************************");
+//   console.log("**************ERROR*************");
+//   console.log("********************************");
+//   next(err);
+// });
+
+app.use((err, req, res, next) => {
+  const { status = 500, message = "Something went wrong" } = err;
+  res.status(status).send(message);
 });
 
 app.listen(3000, () => {

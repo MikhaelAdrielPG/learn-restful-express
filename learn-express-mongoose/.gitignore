@@ -128,5 +128,3 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
- 23 changes: 23 additions & 0 deletions23  
-index.js
