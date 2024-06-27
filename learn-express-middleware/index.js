@@ -10,6 +10,14 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  const { password } = req.query;
+  if (password === "tahukrispi") {
+    next();
+  }
+  res.send("Perlu masukkan password");
+});
+
 app.get("/", (req, res) => {
   res.send("Hello, world!");
 });
@@ -17,6 +25,10 @@ app.get("/", (req, res) => {
 app.get("/halaman", (req, res) => {
   console.log(req.timeRequest);
   res.send("Hello, halaman!");
+});
+
+app.get("/admin", (req, res) => {
+  res.send("Helo admin");
 });
 
 app.use((req, res) => {
