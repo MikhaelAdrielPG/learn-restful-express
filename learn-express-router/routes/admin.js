@@ -9,6 +9,8 @@ router.use((req, res, next) => {
 });
 
 router.get("/", (req, res) => {
+  res.cookie("token", "1234567890abcd");
+  res.cookie("user", "admin");
   res.send("administrator");
 });
 
