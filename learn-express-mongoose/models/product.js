@@ -7,19 +7,23 @@ const productSchema = new mongoose.Schema({
   },
   brand: {
     type: String,
-    required: [true, "brand tidak boleh kosong"],
+    required: true,
   },
   price: {
     type: Number,
-    required: [true, "price tidak boleh kosong"],
+    required: true,
   },
   color: {
     type: String,
-    required: [true, "color tidak boleh kosong"],
+    required: true,
   },
   category: {
     type: String,
     enum: ["Baju", "Celana", "Aksesoris", "Jaket"],
+  },
+  garment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Garment",
   },
 });
 
