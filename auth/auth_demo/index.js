@@ -31,15 +31,29 @@ app.use(
   })
 );
 
+const auth = (req, res, next) => {
+  if (!req.session.user_id) {
+    return res.redirect("/login");
+  }
+  next();
+};
+
+const authenticated = (req, res, next) => {
+  if (req.session.user_id) {
+    return res.redirect("/admin");
+  }
+  next();
+};
+
 app.get("/", (req, res) => {
   res.send("Homepage");
 });
 
-app.get("/register", (req, res) => {
+app.get("/register", authenticated, (req, res) => {
   res.render("register");
 });
 
-app.post("/register", async (req, res) => {
+app.post("/register", authenticated, async (req, res) => {
   const { username, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
   const user = new User({
@@ -50,11 +64,11 @@ app.post("/register", async (req, res) => {
   res.redirect("/");
 });
 
-app.get("/login", (req, res) => {
+app.get("/login", authenticated, (req, res) => {
   res.render("login");
 });
 
-app.post("/login", async (req, res) => {
+app.post("/login", authenticated, async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
   if (user) {
@@ -70,18 +84,18 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/logout", (req, res) => {
-  // req.session.user_id = null
+app.post("/logout", auth, (req, res) => {
   req.session.destroy(() => {
     res.redirect("/login");
   });
 });
 
-app.get("/admin", (req, res) => {
-  if (!req.session.user_id) {
-    return res.redirect("/login");
-  }
+app.get("/admin", auth, (req, res) => {
   res.render("admin");
+});
+
+app.get("/profile/settings", auth, (req, res) => {
+  res.send("Profile Settings: " + req.session.user_id);
 });
 
 app.listen(3000, () => {
