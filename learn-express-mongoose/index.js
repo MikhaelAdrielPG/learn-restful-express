@@ -7,6 +7,7 @@ const ErrorHandler = require("./ErrorHandler");
 
 /* Models */
 const Product = require("./models/product");
+const Garment = require("./models/garment");
 
 // connect to mongodb
 mongoose
@@ -32,6 +33,66 @@ function wrapAsync(fn) {
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
+
+app.get(
+  "/garments",
+  wrapAsync(async (req, res) => {
+    const garments = await Garment.find({});
+    res.render("garment/index", { garments });
+  })
+);
+
+app.get("/garments/create", (req, res) => {
+  res.render("garment/create");
+});
+
+app.post(
+  "/garments",
+  wrapAsync(async (req, res) => {
+    const garment = new Garment(req.body);
+    await garment.save();
+    res.redirect(`/garments`);
+  })
+);
+
+app.get(
+  "/garments/:id",
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+    const garment = await Garment.findById(id).populate("products");
+    res.render("garment/show", { garment });
+  })
+);
+
+// /garments/:garment_id/product/create
+app.get("/garments/:garment_id/products/create", (req, res) => {
+  const { garment_id } = req.params;
+  res.render("products/create", { garment_id });
+});
+
+// /garments/:garment_id/product/
+app.post(
+  "/garments/:garment_id/products",
+  wrapAsync(async (req, res) => {
+    const { garment_id } = req.params;
+    const garment = await Garment.findById(garment_id);
+    const product = new Product(req.body);
+    garment.products.push(product);
+    product.garment = garment;
+    await garment.save();
+    await product.save();
+    res.redirect(`/garments/${garment_id}`);
+  })
+);
+
+app.delete(
+  "/garments/:garment_id/",
+  wrapAsync(async (req, res) => {
+    const { garment_id } = req.params;
+    await Garment.findOneAndDelete({ _id: garment_id });
+    res.redirect("/garments");
+  })
+);
 
 app.get("/products", async (req, res) => {
   const { category } = req.query;
@@ -61,7 +122,7 @@ app.get(
   "/products/:id",
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const product = await Product.findById(id);
+    const product = await Product.findById(id).populate("garment");
     res.render("products/show", { product });
   })
 );
