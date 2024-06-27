@@ -59,7 +59,7 @@ app.get(
   "/garments/:id",
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const garment = await Garment.findById(id);
+    const garment = await Garment.findById(id).populate("products");
     res.render("garment/show", { garment });
   })
 );
@@ -80,7 +80,6 @@ app.post(
     garment.products.push(product);
     await garment.save();
     await product.save();
-    console.log(garment);
     res.redirect(`/garments/${garment_id}`);
   })
 );
