@@ -28,12 +28,23 @@ app.get("/halaman", (req, res) => {
   res.send("Hello, halaman!");
 });
 
+app.get("/error", (req, res) => {
+  bird.fly();
+});
+
 app.get("/admin", auth, (req, res) => {
   res.send("Helo admin");
 });
 
 app.use((req, res) => {
   res.status(404).send("Page not found");
+});
+
+app.use((err, req, res, next) => {
+  console.log("********************************");
+  console.log("**************ERROR*************");
+  console.log("********************************");
+  next(err);
 });
 
 app.listen(3000, () => {
