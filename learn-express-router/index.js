@@ -16,7 +16,7 @@ app.use(
     secret: secret,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true },
+    cookie: { secure: process.env.NODE_ENV === "production" },
   })
 );
 
@@ -38,6 +38,20 @@ app.get("/count", (req, res) => {
     req.session.count = 1;
   }
   res.send(`count: ${req.session.count}`);
+});
+
+app.get("/register", (req, res) => {
+  const { username = "Anonim" } = req.query;
+  req.session.username = username;
+  res.redirect("/dashboard");
+});
+
+app.get("/dashboard", (req, res) => {
+  if (req.session.username) {
+    res.send(`Welcome back ${req.session.username}`);
+  } else {
+    res.redirect("/register");
+  }
 });
 
 app.use("/admin", require("./routes/admin"));
