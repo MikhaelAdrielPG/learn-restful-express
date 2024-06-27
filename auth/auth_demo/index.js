@@ -70,11 +70,18 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.post("/logout", (req, res) => {
+  // req.session.user_id = null
+  req.session.destroy(() => {
+    res.redirect("/login");
+  });
+});
+
 app.get("/admin", (req, res) => {
   if (!req.session.user_id) {
     return res.redirect("/login");
   }
-  res.send("Halaman admin hanya bisa diakses jika kamu login!");
+  res.render("admin");
 });
 
 app.listen(3000, () => {
